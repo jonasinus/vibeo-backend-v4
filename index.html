@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Login Page</title>
+    </head>
+    <body>
+        <h1>Login</h1>
+        <form id="login-form">
+            <div>
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required />
+            </div>
+            <div>
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required />
+            </div>
+            <div>
+                <button type="submit">Login</button>
+            </div>
+        </form>
+
+        <h2>Actions</h2>
+        <button id="verify-token">Verify Token</button>
+        <button id="logout">Logout</button>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const loginForm = document.getElementById('login-form')
+                const verifyTokenButton = document.getElementById('verify-token')
+                const logoutButton = document.getElementById('logout')
+
+                loginForm.addEventListener('submit', async (e) => {
+                    e.preventDefault()
+
+                    const username = document.getElementById('username').value
+                    const password = document.getElementById('password').value
+
+                    const response = await fetch('http://localhost:3000/auth/login', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        mode: 'cors',
+                        credentials: 'include',
+                        body: JSON.stringify({ username, password })
+                    })
+
+                    if (response.ok) {
+                        alert('logged in')
+                    } else {
+                        alert('Login failed. Please check your credentials.')
+                    }
+                })
+
+                verifyTokenButton.addEventListener('click', async () => {
+                    const response = await fetch('http://localhost:3000/auth/verify', {
+                        method: 'GET',
+                        credentials: 'include'
+                    })
+
+                    if (response.ok) {
+                        alert('Token is valid. You have access to protected resources.')
+                    } else {
+                        alert('Token verification failed. Please log in.')
+                    }
+                })
+
+                logoutButton.addEventListener('click', async () => {
+                    const response = await fetch('http://localhost:3000/auth/logout', {
+                        method: 'POST',
+                        credentials: 'include'
+                    })
+
+                    if (response.ok) {
+                        window.location.reload()
+                    } else {
+                        alert('Logout failed. Please try again.')
+                    }
+                })
+            })
+        </script>
+    </body>
+</html>
